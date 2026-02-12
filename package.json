@@ -1,0 +1,43 @@
+{
+  "name": "@aliou/pi-excel",
+  "version": "0.0.1",
+  "description": "Pi extension for reading, querying, and updating Excel (.xlsx) files",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi-package"
+  ],
+  "exports": {
+    "./tools": "./src/tools/index.ts"
+  },
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "dependencies": {
+    "@e965/xlsx": "^0.20.3"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": ">=0.52.9"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@aliou/pi-evals": "^0.2.1",
+    "@mariozechner/pi-coding-agent": "0.52.9",
+    "@mariozechner/pi-tui": "0.52.9",
+    "@sinclair/typebox": "^0.34.48",
+    "typescript": "^5.8.0",
+    "vitest": "^4.0.18"
+  },
+  "pnpm": {
+    "overrides": {
+      "@mariozechner/pi-ai": "$@mariozechner/pi-coding-agent",
+      "@mariozechner/pi-tui": "$@mariozechner/pi-coding-agent"
+    }
+  }
+}
