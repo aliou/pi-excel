@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  models: read
-
 jobs:
   evals:
     runs-on: ubuntu-latest
@@ -22,6 +19,6 @@ jobs:
       - run: npm ci
 
       - name: Run evals
-        run: npx pi-evals --model claude-haiku-4-5 --provider github --verbose
+        run: npx pi-evals --model claude-haiku-4-5 --provider github-copilot --verbose
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
