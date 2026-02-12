@@ -21,4 +21,4 @@ jobs:
       - name: Run evals
         run: npx pi-evals --model claude-haiku-4-5 --provider github-copilot --verbose
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
