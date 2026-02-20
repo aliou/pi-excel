@@ -1,8 +1,13 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type {
+  AgentToolResult,
+  ExtensionAPI,
+  Theme,
+  ToolRenderResultOptions,
+} from "@mariozechner/pi-coding-agent";
 import { getMarkdownTheme } from "@mariozechner/pi-coding-agent";
 import { Box, Markdown, Text } from "@mariozechner/pi-tui";
-import { Type } from "@sinclair/typebox";
 import type { Static } from "@sinclair/typebox";
+import { Type } from "@sinclair/typebox";
 import { describeWorkbook, type WorkbookInfo } from "../utils/excel";
 
 const parameters = Type.Object({
@@ -32,6 +37,7 @@ export async function executeDescribe(params: { path: string }) {
 export function registerDescribeTool(pi: ExtensionAPI) {
   pi.registerTool({
     name: "excel_describe",
+    label: "Excel: Describe",
     description:
       "Describe an Excel workbook's structure: sheet names, row counts, column names and inferred types. Use this first to understand a workbook before reading or writing.",
     parameters,
@@ -46,22 +52,30 @@ export function registerDescribeTool(pi: ExtensionAPI) {
       return executeDescribe(params);
     },
 
-    renderCall(args: Static<typeof parameters>, theme: any) {
+    renderCall(args: Static<typeof parameters>, theme: Theme) {
       let text = theme.fg("toolTitle", theme.bold("Excel: Describe "));
       text += theme.fg("accent", args.path);
       return new Text(text, 0, 0);
     },
 
-    renderResult(result: any, { expanded, isPartial }: any, theme: any) {
-      if (isPartial) return new Text(theme.fg("dim", "Reading workbook..."), 0, 0);
+    renderResult(
+      result: AgentToolResult<unknown>,
+      { expanded, isPartial }: ToolRenderResultOptions,
+      theme: Theme,
+    ) {
+      if (isPartial)
+        return new Text(theme.fg("dim", "Reading workbook..."), 0, 0);
 
       const details = result.details as DescribeDetails;
       const wb = details?.workbook;
-      if (!wb) return undefined;
+      if (!wb) return new Text("", 0, 0);
 
       const sheetCount = wb.sheets.length;
       const totalRows = wb.sheets.reduce((sum, s) => sum + s.rowCount, 0);
-      let header = theme.fg("success", `${sheetCount} sheet(s), ${totalRows} total row(s)`);
+      let header = theme.fg(
+        "success",
+        `${sheetCount} sheet(s), ${totalRows} total row(s)`,
+      );
 
       if (!expanded) {
         const names = wb.sheets.map((s) => s.name).join(", ");
@@ -72,7 +86,9 @@ export function registerDescribeTool(pi: ExtensionAPI) {
       // Build markdown table for each sheet.
       const lines: string[] = [];
       for (const sheet of wb.sheets) {
-        lines.push(`### ${sheet.name} (${sheet.rowCount} rows, ${sheet.columnCount} cols)`);
+        lines.push(
+          `### ${sheet.name} (${sheet.rowCount} rows, ${sheet.columnCount} cols)`,
+        );
         lines.push("");
         lines.push("| Column | Type |");
         lines.push("|---|---|");
@@ -87,5 +103,5 @@ export function registerDescribeTool(pi: ExtensionAPI) {
       box.addChild(new Markdown(lines.join("\n"), 0, 0, getMarkdownTheme()));
       return box;
     },
-  } as any);
+  });
 }

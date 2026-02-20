@@ -1,7 +1,12 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type {
+  AgentToolResult,
+  ExtensionAPI,
+  Theme,
+  ToolRenderResultOptions,
+} from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
-import { Type } from "@sinclair/typebox";
 import type { Static } from "@sinclair/typebox";
+import { Type } from "@sinclair/typebox";
 import { addRows } from "../utils/excel";
 
 const parameters = Type.Object({
@@ -9,13 +14,10 @@ const parameters = Type.Object({
   sheet: Type.Optional(
     Type.String({ description: "Sheet name. Defaults to the first sheet." }),
   ),
-  rows: Type.Array(
-    Type.Record(Type.String(), Type.Any()),
-    {
-      description:
-        "Array of row objects. Keys are column names, values are cell values. Column names must match existing headers.",
-    },
-  ),
+  rows: Type.Array(Type.Record(Type.String(), Type.Any()), {
+    description:
+      "Array of row objects. Keys are column names, values are cell values. Column names must match existing headers.",
+  }),
 });
 
 export async function executeAddRows(params: {
@@ -42,6 +44,7 @@ export async function executeAddRows(params: {
 export function registerAddRowsTool(pi: ExtensionAPI) {
   pi.registerTool({
     name: "excel_add_rows",
+    label: "Excel: Add Rows",
     description:
       "Append rows to the end of an Excel sheet. Each row is an object mapping column names to values. Use excel_describe first to learn the column names.",
     parameters,
@@ -56,7 +59,7 @@ export function registerAddRowsTool(pi: ExtensionAPI) {
       return executeAddRows(params);
     },
 
-    renderCall(args: Static<typeof parameters>, theme: any) {
+    renderCall(args: Static<typeof parameters>, theme: Theme) {
       let text = theme.fg("toolTitle", theme.bold("Excel: AddRows "));
       text += theme.fg("accent", args.path);
       if (args.sheet) text += theme.fg("dim", ` [${args.sheet}]`);
@@ -64,16 +67,23 @@ export function registerAddRowsTool(pi: ExtensionAPI) {
       return new Text(text, 0, 0);
     },
 
-    renderResult(result: any, { expanded, isPartial }: any, theme: any) {
+    renderResult(
+      result: AgentToolResult<unknown>,
+      { isPartial }: ToolRenderResultOptions,
+      theme: Theme,
+    ) {
       if (isPartial) return new Text(theme.fg("dim", "Adding rows..."), 0, 0);
 
-      const details = result.details;
-      if (!details) return undefined;
+      const details = result.details as {
+        addedRows?: number;
+        newRowCount?: number;
+      };
+      if (!details) return new Text("", 0, 0);
 
       let text = theme.fg("success", `Added ${details.addedRows} row(s)`);
       text += theme.fg("dim", `, total: ${details.newRowCount}`);
 
       return new Text(text, 0, 0);
     },
-  } as any);
+  });
 }

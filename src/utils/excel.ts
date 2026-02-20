@@ -1,6 +1,6 @@
-import XLSX from "@e965/xlsx";
-import * as path from "node:path";
 import * as fs from "node:fs";
+import * as path from "node:path";
+import XLSX from "@e965/xlsx";
 
 export interface SheetInfo {
   name: string;
@@ -30,7 +30,10 @@ function writeWorkbook(wb: XLSX.WorkBook, filePath: string): void {
   fs.writeFileSync(filePath, buf);
 }
 
-function getSheet(wb: XLSX.WorkBook, name?: string): { sheet: XLSX.WorkSheet; sheetName: string } {
+function getSheet(
+  wb: XLSX.WorkBook,
+  name?: string,
+): { sheet: XLSX.WorkSheet; sheetName: string } {
   const sheetName = name ?? wb.SheetNames[0];
   if (!sheetName || !wb.SheetNames.includes(sheetName)) {
     throw new Error(
@@ -69,7 +72,9 @@ function inferColumnType(grid: unknown[][], colIndex: number): string {
   return [...types].join(" | ");
 }
 
-export async function describeWorkbook(filePath: string): Promise<WorkbookInfo> {
+export async function describeWorkbook(
+  filePath: string,
+): Promise<WorkbookInfo> {
   const resolved = path.resolve(filePath);
   const wb = readWorkbook(filePath);
 
@@ -110,13 +115,17 @@ export interface ReadOptions {
 export async function readSheet(
   filePath: string,
   options: ReadOptions = {},
-): Promise<{ headers: string[]; rows: Record<string, unknown>[]; totalRows: number }> {
+): Promise<{
+  headers: string[];
+  rows: Record<string, unknown>[];
+  totalRows: number;
+}> {
   const wb = readWorkbook(filePath);
   const { sheet } = getSheet(wb, options.sheet);
   const grid = sheetToGrid(sheet);
 
-  const allHeaders = ((grid[0] ?? []) as unknown[]).map(
-    (h, i) => String(h ?? `Column ${i + 1}`),
+  const allHeaders = ((grid[0] ?? []) as unknown[]).map((h, i) =>
+    String(h ?? `Column ${i + 1}`),
   );
 
   const filteredColumns = options.columns
@@ -162,16 +171,18 @@ export async function writeToSheet(
 ): Promise<{ updatedCells: number }> {
   const resolved = path.resolve(filePath);
   if (!fs.existsSync(resolved)) {
-    throw new Error(`File not found: ${resolved}. Use excel_create to create a new workbook.`);
+    throw new Error(
+      `File not found: ${resolved}. Use excel_create to create a new workbook.`,
+    );
   }
 
   const wb = readWorkbook(filePath);
-  const { sheet: ws, sheetName } = getSheet(wb, sheet);
+  const { sheet: ws } = getSheet(wb, sheet);
 
   // Build header map from first row.
   const grid = sheetToGrid(ws);
-  const headers = ((grid[0] ?? []) as unknown[]).map(
-    (h, i) => String(h ?? `Column ${i + 1}`),
+  const headers = ((grid[0] ?? []) as unknown[]).map((h, i) =>
+    String(h ?? `Column ${i + 1}`),
   );
   const nameToCol: Map<string, number> = new Map();
   for (let i = 0; i < headers.length; i++) {
@@ -217,15 +228,17 @@ export async function addRows(
 ): Promise<{ addedRows: number; newRowCount: number }> {
   const resolved = path.resolve(filePath);
   if (!fs.existsSync(resolved)) {
-    throw new Error(`File not found: ${resolved}. Use excel_create to create a new workbook.`);
+    throw new Error(
+      `File not found: ${resolved}. Use excel_create to create a new workbook.`,
+    );
   }
 
   const wb = readWorkbook(filePath);
-  const { sheet: ws, sheetName } = getSheet(wb, options.sheet);
+  const { sheet: ws } = getSheet(wb, options.sheet);
 
   const grid = sheetToGrid(ws);
-  const headers = ((grid[0] ?? []) as unknown[]).map(
-    (h, i) => String(h ?? `Column ${i + 1}`),
+  const headers = ((grid[0] ?? []) as unknown[]).map((h, i) =>
+    String(h ?? `Column ${i + 1}`),
   );
   const nameToCol: Map<string, number> = new Map();
   for (let i = 0; i < headers.length; i++) {

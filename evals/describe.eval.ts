@@ -1,6 +1,6 @@
-import { evaluate, Scorers } from "@aliou/pi-evals";
-import type { Scorer } from "@aliou/pi-evals";
 import * as path from "node:path";
+import type { Scorer } from "@aliou/pi-evals";
+import { evaluate, Scorers } from "@aliou/pi-evals";
 
 const fixturePath = path.resolve("tests/fixtures/multi-sheet.xlsx");
 
@@ -21,7 +21,14 @@ const mentionsColumns: Scorer = {
   name: "mentions_columns",
   async score(ctx) {
     const output = ctx.output.toLowerCase();
-    const cols = ["product", "price", "category", "orderid", "quantity", "total"];
+    const cols = [
+      "product",
+      "price",
+      "category",
+      "orderid",
+      "quantity",
+      "total",
+    ];
     const found = cols.filter((c) => output.includes(c));
     const score = found.length / cols.length;
     return {

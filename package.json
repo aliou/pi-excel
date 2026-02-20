@@ -4,8 +4,22 @@
   "description": "Pi extension for reading, querying, and updating Excel (.xlsx) files",
   "type": "module",
   "license": "MIT",
+  "private": false,
   "keywords": [
-    "pi-package"
+    "pi-package",
+    "pi-extension",
+    "pi"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aliou/pi-excel"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src",
+    "README.md"
   ],
   "exports": {
     "./tools": "./src/tools/index.ts"
@@ -16,21 +30,42 @@
     ]
   },
   "dependencies": {
-    "@e965/xlsx": "^0.20.3"
+    "@e965/xlsx": "^0.20.3",
+    "@sinclair/typebox": "^0.34.48"
   },
   "peerDependencies": {
-    "@mariozechner/pi-coding-agent": ">=0.52.9"
+    "@mariozechner/pi-coding-agent": ">=0.52.9",
+    "@mariozechner/pi-tui": ">=0.51.0"
+  },
+  "peerDependenciesMeta": {
+    "@mariozechner/pi-coding-agent": {
+      "optional": true
+    },
+    "@mariozechner/pi-tui": {
+      "optional": true
+    }
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "format": "biome check --write",
+    "check:lockfile": "pnpm install --frozen-lockfile --ignore-scripts",
+    "prepare": "[ -d .git ] && husky || true",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm changeset publish",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@aliou/biome-plugins": "^0.3.2",
     "@aliou/pi-evals": "^0.2.1",
+    "@biomejs/biome": "^2.4.2",
+    "@changesets/cli": "^2.27.11",
     "@mariozechner/pi-coding-agent": "0.52.9",
     "@mariozechner/pi-tui": "0.52.9",
-    "@sinclair/typebox": "^0.34.48",
+    "@types/node": "^25.0.10",
+    "husky": "^9.1.7",
     "typescript": "^5.8.0",
     "vitest": "^4.0.18"
   },
@@ -40,9 +75,5 @@
       "@mariozechner/pi-tui": "$@mariozechner/pi-coding-agent"
     }
   },
-  "peerDependenciesMeta": {
-    "@mariozechner/pi-coding-agent": {
-      "optional": true
-    }
-  }
+  "packageManager": "pnpm@10.26.1"
 }

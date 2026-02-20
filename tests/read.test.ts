@@ -1,22 +1,31 @@
-import { describe, it, expect } from "vitest";
-import { executeRead } from "../src/tools/read";
 import * as path from "node:path";
+import { describe, expect, it } from "vitest";
+import { executeRead } from "../src/tools/read";
 
 const fixtures = path.join(import.meta.dirname, "fixtures");
 
 describe("excel_read", () => {
   it("reads all rows from a simple xlsx", async () => {
-    const result = await executeRead({ path: path.join(fixtures, "simple.xlsx") });
+    const result = await executeRead({
+      path: path.join(fixtures, "simple.xlsx"),
+    });
     const rows = JSON.parse(result.content[0].text);
 
     expect(rows).toHaveLength(5);
-    expect(rows[0]).toEqual({ Name: "Alice", Age: 30, City: "Paris", Active: true });
+    expect(rows[0]).toEqual({
+      Name: "Alice",
+      Age: 30,
+      City: "Paris",
+      Active: true,
+    });
     expect(result.details.totalRows).toBe(5);
     expect(result.details.headers).toEqual(["Name", "Age", "City", "Active"]);
   });
 
   it("reads all rows from a simple xls", async () => {
-    const result = await executeRead({ path: path.join(fixtures, "simple.xls") });
+    const result = await executeRead({
+      path: path.join(fixtures, "simple.xls"),
+    });
     const rows = JSON.parse(result.content[0].text);
 
     expect(rows).toHaveLength(5);
@@ -62,7 +71,9 @@ describe("excel_read", () => {
   });
 
   it("handles sparse data", async () => {
-    const result = await executeRead({ path: path.join(fixtures, "sparse.xlsx") });
+    const result = await executeRead({
+      path: path.join(fixtures, "sparse.xlsx"),
+    });
     const rows = JSON.parse(result.content[0].text);
 
     // Row with null email
@@ -72,17 +83,27 @@ describe("excel_read", () => {
   });
 
   it("reads headers-only workbook as empty", async () => {
-    const result = await executeRead({ path: path.join(fixtures, "headers-only.xlsx") });
+    const result = await executeRead({
+      path: path.join(fixtures, "headers-only.xlsx"),
+    });
     const rows = JSON.parse(result.content[0].text);
 
     expect(rows).toHaveLength(0);
     expect(result.details.totalRows).toBe(0);
-    expect(result.details.headers).toEqual(["ID", "Title", "Status", "Priority"]);
+    expect(result.details.headers).toEqual([
+      "ID",
+      "Title",
+      "Status",
+      "Priority",
+    ]);
   });
 
   it("throws for non-existent sheet", async () => {
     await expect(
-      executeRead({ path: path.join(fixtures, "simple.xlsx"), sheet: "NoSuchSheet" }),
+      executeRead({
+        path: path.join(fixtures, "simple.xlsx"),
+        sheet: "NoSuchSheet",
+      }),
     ).rejects.toThrow("not found");
   });
 });

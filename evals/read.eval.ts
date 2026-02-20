@@ -1,6 +1,6 @@
-import { evaluate, Scorers } from "@aliou/pi-evals";
-import type { Scorer } from "@aliou/pi-evals";
 import * as path from "node:path";
+import type { Scorer } from "@aliou/pi-evals";
+import { evaluate, Scorers } from "@aliou/pi-evals";
 
 const fixturePath = path.resolve("tests/fixtures/simple.xlsx");
 
@@ -27,8 +27,5 @@ evaluate("Read data from a sheet", {
       input: `Read the first 2 rows from ${fixturePath}. Only show the Name and City columns.`,
     },
   ],
-  scorers: [
-    Scorers.toolCalled("excel_read"),
-    mentionsData,
-  ],
+  scorers: [Scorers.toolCalled("excel_read"), mentionsData],
 });

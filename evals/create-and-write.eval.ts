@@ -1,5 +1,5 @@
-import { evaluate, Scorers } from "@aliou/pi-evals";
 import type { Scorer } from "@aliou/pi-evals";
+import { evaluate, Scorers } from "@aliou/pi-evals";
 
 const verifyFile: Scorer = {
   name: "verify_file",
@@ -28,8 +28,8 @@ evaluate("Create, populate, and update a workbook", {
       input: [
         "Do the following steps:",
         '1. Create an Excel file at ./inventory.xlsx with a sheet called "Items" and columns: Name, Quantity, Price',
-        '2. Add these rows: Widget (10, 9.99), Gadget (5, 24.99), Bolt (100, 0.50)',
-        '3. Update the Gadget quantity to 8',
+        "2. Add these rows: Widget (10, 9.99), Gadget (5, 24.99), Bolt (100, 0.50)",
+        "3. Update the Gadget quantity to 8",
       ].join("\n"),
     },
   ],

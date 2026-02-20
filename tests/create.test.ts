@@ -1,13 +1,16 @@
-import { describe, it, expect, afterEach } from "vitest";
+import * as crypto from "node:crypto";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
 import { executeCreate } from "../src/tools/create";
 import { executeDescribe } from "../src/tools/describe";
-import * as fs from "node:fs";
-import * as path from "node:path";
-import * as os from "node:os";
-import * as crypto from "node:crypto";
 
 function tmpFile(ext = ".xlsx"): string {
-  return path.join(os.tmpdir(), `pi-excel-test-${crypto.randomBytes(6).toString("hex")}${ext}`);
+  return path.join(
+    os.tmpdir(),
+    `pi-excel-test-${crypto.randomBytes(6).toString("hex")}${ext}`,
+  );
 }
 
 describe("excel_create", () => {
@@ -37,7 +40,7 @@ describe("excel_create", () => {
     expect(wb.sheets).toHaveLength(1);
     expect(wb.sheets[0].name).toBe("Data");
     expect(wb.sheets[0].rowCount).toBe(0);
-    expect(wb.sheets[0].columns.map((c: any) => c.name)).toEqual(["A", "B", "C"]);
+    expect(wb.sheets[0].columns.map((c) => c.name)).toEqual(["A", "B", "C"]);
   });
 
   it("creates a multi-sheet workbook", async () => {
@@ -73,7 +76,10 @@ describe("excel_create", () => {
   });
 
   it("creates parent directories", async () => {
-    const dir = path.join(os.tmpdir(), `pi-excel-nested-${crypto.randomBytes(4).toString("hex")}`);
+    const dir = path.join(
+      os.tmpdir(),
+      `pi-excel-nested-${crypto.randomBytes(4).toString("hex")}`,
+    );
     const file = path.join(dir, "sub", "file.xlsx");
     tmpFiles.push(file);
 

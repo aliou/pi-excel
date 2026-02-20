@@ -2,9 +2,10 @@
  * Script to generate test fixture files (.xls and .xlsx).
  * Run with: npx tsx tests/create-fixtures.ts
  */
-import XLSX from "@e965/xlsx";
+
 import * as fs from "node:fs";
 import * as path from "node:path";
+import XLSX from "@e965/xlsx";
 
 const FIXTURES_DIR = path.join(import.meta.dirname, "fixtures");
 
@@ -41,16 +42,20 @@ function createMultiSheet() {
     ["Product", "Price", "Category"],
     ["Widget", 9.99, "Hardware"],
     ["Gadget", 24.99, "Electronics"],
-    ["Doohickey", 4.50, "Hardware"],
+    ["Doohickey", 4.5, "Hardware"],
   ];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(products), "Products");
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.aoa_to_sheet(products),
+    "Products",
+  );
 
   const orders = [
     ["OrderID", "Product", "Quantity", "Total"],
     [1001, "Widget", 5, 49.95],
     [1002, "Gadget", 2, 49.98],
-    [1003, "Widget", 10, 99.90],
-    [1004, "Doohickey", 3, 13.50],
+    [1003, "Widget", 10, 99.9],
+    [1004, "Doohickey", 3, 13.5],
   ];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(orders), "Orders");
 
